@@ -2,7 +2,7 @@
 It is a demo project for education purposes. Hotel Booking is all developed with Visual Studio 2019.
 
 
-[(https://github.com/niksak89/Hotel-Booking-Site/blob/master/Hotel%20Booking.jpg)]
+[](https://github.com/niksak89/Hotel-Booking-Site/blob/master/Hotel%20Booking.jpg)
 
 ## Utilizes
 
