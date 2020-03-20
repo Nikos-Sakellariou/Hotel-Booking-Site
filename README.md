@@ -1,5 +1,20 @@
-# Welcome to GitHub Desktop!
+It is a demo project for education purposes. Hotel Booking is all developed with Visual Studio 2019.
 
-This is your README. READMEs are where you can communicate what your project is and how to use it.
-
-Write your name on line 6, save it, and then head back to GitHub Desktop.
+Utilizes
++Database
+	-MySQL DB
++Front-end
+	-HTML
+	-CSS
+	-Bootstrap
+	-Javascript
+	-jQuery
+	-Ajax
+	-Sweet Alert https://sweetalert.js.org/
++Back-end
+	-C# .NET MVC 
+	
+Requires
+	-XAMPP
+	-MySQL Workbench
+	-VS 2019

@@ -1,0 +1,183 @@
+﻿@model UserProfile
+
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+@section Links {
+    <link rel="stylesheet" type="text/css" href="~/css/star-rating-svg.css">
+}
+
+@section FirstScripts {
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+}
+
+
+<div id="wrapper" style="background-color: #F4F4F4">
+    <div class="row">
+        <div class="col-md-3 container-fluid" style="border-right:2px solid black">
+            <!-- Navigation element -->
+            <nav class="tab-nav">
+                <ul>
+                    <li>
+                        <a class="active-link" title="Bookings">My Bookings</a>
+                    </li>
+                    <li>
+                        <a title="Reviews">Reviews</a>
+                    </li>
+                    <li>
+                        <a title="Favorites">Favorites</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- Bookings Tab -->
+        <div class="col-md-9">
+            <section class="container-fluid tabcontent" id="Bookings">
+                <div class="row">
+                    <h3 class="search-results">
+                        Bookings
+                    </h3>
+                </div>
+                @foreach (var book in Model.sbookings)
+                {
+                    <div class="row hotelbox">
+                        <div class="row">
+                            <div class="col-md-3 hotel-img">
+                                <img class="img-responsive mySlides" src="~/img/@book.Photo" alt="Room Image" />
+                            </div>
+                            <div class="col-md-9 descrbox" style="padding:10px">
+                                <div class="row col-md-12 descr">
+                                    <div class="col-md-10">
+                                        <h3 class="hotel-name">
+                                            <a asp-action="Book" asp-route-roomId="@book.RoomId" asp-route-datein="@null" asp-route-dateout="@null">@book.Name</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="row col-md-10">
+                                    <p class="descrp">@book.ShortDescription</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @{
+                                DateTime checkin;
+                                DateTime checkout;
+                                DateTime.TryParseExact(book.CheckOutDate, "dd/MM/yyyy", null, DateTimeStyles.None, out checkout);
+                                DateTime.TryParseExact(book.CheckInDate, "dd/MM/yyyy", null, DateTimeStyles.None, out checkin);
+                                double totalprice = book.Price * (checkout - checkin).TotalDays;
+                                <text>
+                                    <div class="col-md-3 hotel-feats-box">
+                                        Total Cost: @totalprice€
+                                    </div>
+                                    <div class="col-md-8 hotel-feats-box">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                Check-in:<br> @checkin.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div class="col-md-4">
+                                                Check-out:<br> @checkout.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div class="col-md-4">
+                                                Type of Room: @book.RoomType
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </text>}
+                        </div>
+                    </div>
+                    <hr>
+                }
+            </section>
+            <!-- Reviews Tab -->
+            <section class="container-fluid tabcontent" id="Reviews" style="display:none;">
+                <div class="row">
+                    <h3 class="search-results">
+                        Reviews
+                    </h3>
+                </div>
+                @foreach (var review in Model.sreviews)
+                {
+                    <div class="row hotelbox">
+                        <div class="row col-md-10">
+                            <div class="row col-md-12">
+                                <p class="descrp"><b>@review.Room.Name</b></p>
+                                <div data-rating="@review.Review.Rate" class="my-rating jq-stars"></div>
+                            </div>
+                            <div class="row col-md-12">
+                                <p class="descrp" style="font-size: 14px"> <i>Add Time: @review.Review.DateCreated.ToString("dd/MM/yyyy hh:mm") </i></p>
+                            </div>
+                            <div class="row col-md-12">
+                                <p class="descrp">@review.Review.Text</p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                }
+            </section>
+            <!-- Favorites Tab -->
+            <section class="container-fluid tabcontent" id="Favorites" style="display:none;">
+                <div class="row">
+                    <h3 class="search-results">
+                        Favorites
+                    </h3>
+                </div>
+                @foreach (var favor in Model.sfavorites)
+                {
+                    <div class="row hotelbox">
+                        <div class="row">
+                            <div class="col-md-12" style="padding:10px">
+                                <div class="row col-md-12 descr">
+                                    <h3 class="hotel-name">
+                                        <a asp-action="Book" asp-route-roomId="@favor.Room.RoomId" asp-route-datein="@null" asp-route-dateout="@null">@favor.Room.Name</a>
+                                    </h3>
+                                </div>
+                                <div class="row col-md-12">
+                                    <p class="descrp">@favor.Room.ShortDescription</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                }
+            </section>
+
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/js/jquery.star-rating-svg.js"></script>
+    <script>
+        const tabs = document.querySelectorAll('.tab-nav ul li a');
+        tabs.forEach(clickedTab => {
+            clickedTab.addEventListener('click', () => {
+                tabs.forEach(tab => {
+                    if (tab == clickedTab) {
+                        document.getElementById(tab.title).style.display = "block";
+                    }
+                    else {
+                        document.getElementById(tab.title).style.display = "none";
+                    }
+                    tab.classList.remove('active-link');
+                });
+                clickedTab.classList.add('active-link');
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+
+            var init = $(".my-rating").attr('data-rating');
+            $(".my-rating").starRating({
+                initialRating: init,
+                starSize: 20
+            });
+
+        });
+    </script>
+}

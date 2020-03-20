@@ -1,0 +1,315 @@
+﻿@model RoomSuperSearch
+
+@{
+    ViewData["Title"] = "Results";
+}
+
+@section Links {
+    <link rel="stylesheet" href="~/css/multirange.css" />
+    <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+}
+@section FirstScripts {
+    <script src="~/js/multirange.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+}
+
+<div id="wrapper" style="background-color: #F4F4F4">
+    <div class="row container-fluid">
+        <div class="col-md-3 " style="border-right:2px solid black; background-color: white">
+            <form id="searchForm" method="post" asp-action="Results">
+                <fieldset>
+                    <div class="row">
+                        <div class="col-md-12 component container-fluid centered">
+                            <h3 class="find-hotel-txt">
+                                Advanced Search
+                            </h3>
+                        </div>
+                        <div class="col-md-12 centered">
+                            <select class="form-control form-marg" id="city" name="city" required>
+                                <option value="" selected disabled hidden>City</option>
+                                @foreach (string city in Model.Roomsearch.Cities)
+                                {
+                                    <option value="@city">@city</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-12 centered">
+                            <select class="form-control form-marg" id="roomtype" name="roomtype" required>
+                                <option value="" selected disabled hidden>Room type</option>
+                                @foreach (string room in Model.Roomsearch.RoomTypes)
+                                {
+                                    <option value="@room">@room</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                            <label class="component">Price</label><br>
+                            <span class=" component" name="rangespan">
+                                <input id="rangeprice" type="range" name="rangeprice" multiple value="0,250" max="500" />
+                            </span>
+                        </div>
+                        <div class="col-md-6 centered">
+                            <input type="text" disabled class="pricetxt component" id="price-lower" name="price-lower" />
+                        </div>
+                        <div class="col-md-6 centered">
+                            <input type="text" disabled class="pricetxt component" id="price-upper" name="price-upper" />
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                            <label class="component" for="indate">Check in</label><br>
+                            <input class="form-control form-marg" id="datein" name="datein" placeholder="Check in" type="text" autocomplete="off" required />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="component" for="outdate">Check out</label><br>
+                            <input class="form-control form-marg" id="dateout" name="dateout" placeholder="Check out" type="text" autocomplete="off" required />
+                            <hr>
+                        </div>
+                        <div class="col-md-12 centered">
+                            <input type="submit" align="middle" class="findnow" value="SEARCH" />
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-md-9">
+            <div class="container-fluid tabcontent" style="padding: 0 8px">
+                <div class="row">
+                    <h3 class="search-results">
+                        Search Results
+                    </h3>
+                </div>
+                @foreach (var room in Model.RoomModels)
+                {
+                    <div class="row hotelbox">
+                        <div class="col-md-3 hotel-img">
+                            <img class="img-responsive" src="~/img/@room.Room.Photo" alt="Room Image" />
+                        </div>
+                        <div class="col-md-9 descrbox" style="padding:10px">
+                            <div class="row col-md-12 descr">
+                                <div class="col-md-10">
+                                    <h3 class="hotel-name">
+                                        @if (room.Booked)
+                                        {
+                                            <a>@room.Room.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Book" asp-route-roomId="@room.Room.RoomId" asp-route-datein="@Model.CheckInDate" asp-route-dateout="@Model.CheckOutDate">@room.Room.Name</a>
+                                        }
+
+                                    </h3><br />
+                                    <p class="hotel-details">
+                                        @room.Room.City - @room.Room.Area
+                                    </p>
+                                </div>
+                                <span class="hotel-ratings heart1" data-fav="@room.Room.RoomId">
+                                    <svg class="heart right" viewBox="0 0 32 29.6">
+                                        <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+										c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="row col-md-10">
+                                <p class="descrp">@room.Room.ShortDescription</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 hotel-feats-box">
+                            PER NIGHT: @room.Room.Price €
+                        </div>
+                        <div class="col-md-3 hotel-feats-box">
+                            Count of guests: @room.Room.CountOfGuests
+                        </div>
+                        <div class="col-md-4 hotel-feats-box">
+                            Type of room: @Model.SelectedRoomType
+                        </div>
+
+                        <div class="col-md-11 right">
+                            @if (room.Booked)
+                            {
+                                <input type="submit" class="booked" value="Booked" disabled />
+                            }
+                            else
+                            {
+                                <form asp-action="Book" asp-route-roomId="@room.Room.RoomId" asp-route-datein="@Model.CheckInDate" asp-route-dateout="@Model.CheckOutDate" method="post">
+                                    <input type="submit" class="booknow" value="Book now" />
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(".heart1").each(function () {
+            var fav = $(this).attr('data-fav');
+            $.ajax({
+                url: '@Url.Action("GetFavorite", "Home")',
+                data: { roomId: fav, userId: 1 },
+                success: function (result) {
+                    var flag = result;
+                    var heart = $(".heart1[data-fav=" + fav + "]").find(".heart");
+                    heart.attr('data-flag', flag);
+                    if (heart.attr('data-flag')==0) {
+                        heart.css('fill', 'grey');
+                    }
+                    else {
+                        heart.css('fill', 'red');
+                    }
+                    heart.hover(function () {
+                    if (heart.attr('data-flag') == 0) {
+                        heart.css('fill', 'darkgrey');
+                    }
+                    else {
+                        heart.css('fill', 'darkred');
+                    }
+                    }, function () {
+                        if (heart.attr('data-flag') == 0) {
+                            heart.css('fill', 'grey');
+                        }
+                        else {
+                            heart.css('fill', 'red');
+                        }
+                    }
+                    );
+
+
+                    heart.click(function () {
+                        if (heart.attr('data-flag') == 0) {
+                            $.ajax({
+                                async: true,
+                                url: '@Url.Action("SetFavorite", "Home")',
+                                data: { roomId: fav ,status:1},
+                                success: function () {
+                                    heart.css('fill', 'red');
+                                    heart.attr('data-flag', 1);
+                                }
+                            });
+                        }
+                        else {
+                             $.ajax({
+                                async: true,
+                                url: '@Url.Action("SetFavorite", "Home")',
+                                data: { roomId: fav ,status:0},
+                                success: function () {
+                                    heart.css('fill', 'grey');
+                                    heart.attr('data-flag', 0);
+                                }
+                            });
+                        }
+                    });
+                    }
+             });
+
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var options = {
+                format: 'dd/mm/yyyy',
+                todayHighlight: true,
+                autoclose: true,
+                startDate: new Date()
+            };
+            var date_in = $('input[id="datein"]');
+            var date_out = $('input[id="dateout"]');
+            date_in.datepicker(options).on('changeDate', function (e) {
+                var nextday = new Date(e.date);
+                nextday.setDate(nextday.getDate() + 1);
+                if (moment(date_out.val(), "DD/MM/YYYY").isValid()) {
+                    var dateMomentObj = moment(date_out.val(), "DD/MM/YYYY");
+                    var dateout = dateMomentObj.toDate();
+                    if (dateout < nextday) {
+                        date_out.datepicker('update', '');
+                    }
+                }
+                date_out.datepicker('setStartDate', nextday);
+            });
+
+            date_out.datepicker(options).on('changeDate', function (e) {
+                var prevday = new Date(e.date);
+                prevday.setDate(prevday.getDate() - 1);
+                if (moment(date_in.val(), "DD/MM/YYYY").isValid()) {
+                    var dateMomentObj = moment(date_in.val(), "DD/MM/YYYY");
+                    var datein = dateMomentObj.toDate();
+                    if (datein > prevday) {
+                        date_in.datepicker('update', '');
+                    }
+                }
+                date_in.datepicker('setEndDate', prevday);
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#searchForm').validate({
+                ignore: "#rangeprice",
+                onkeyup: false,
+                onclick: false,
+                onfocusout: false,
+                rules: {
+                    city: {
+                        required: true,
+                    },
+                    roomtype: {
+                        required: true,
+                    },
+                    datein: {
+                        required: true,
+                        dateITA: true,
+                    },
+                    dateout: {
+                        required: true,
+                        dateITA: true,
+                    }
+                },
+                messages: {
+                    city: {
+                        required: 'Please select a city.',
+                    },
+                    roomtype: {
+                        required: 'Please select a room type.',
+                    },
+                    datein: {
+                        required: 'Please select a check-in date.',
+                        dateITA: 'Selected date is not valid.',
+                    },
+                    dateout: {
+                        required: 'Please select a check-out date.',
+                        dateITA: 'Selected date is not valid.',
+                    }
+                },
+                invalidHandler: function (form, validator) {
+                    var errors = validator.numberOfInvalids();
+                    const wrapper = document.createElement('div');
+                    if (errors) {
+                        if (validator.errorList.length > 0) {
+                            wrapper.innerHTML = "<ul class='error' style='float:right'>";
+                            for (x = 0; x < validator.errorList.length; x++) {
+                                wrapper.innerHTML += "<li>" + validator.errorList[x].message + "</li>";
+                            }
+                            wrapper.innerHTML += "</ul>";
+                        }
+                        swal({
+                            title: "Error!",
+                            content: wrapper,
+                            icon: "error"
+                        });
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    return false;
+                }
+            });
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

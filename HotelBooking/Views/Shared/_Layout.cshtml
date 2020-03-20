@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _signInManager;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HotelBooking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/flexboxgrid.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    @RenderSection("Links", required: false)
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/js/jquery-1.11.2.min.js"></script>
+    @RenderSection("FirstScripts", required: false)
+</head>
+<body>
+    <header>
+        <div class="container container-fluid">
+            <div class="row middle">
+                <!-- Navigation element -->
+                <nav class="main-navigation">
+                    <ul>
+                        <li>
+                            <a id="aHome" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home</a>
+                        </li>
+                        <li>
+                            <a id="aAbout" asp-area="" asp-controller="Home" asp-action="About"><i class="fa fa-info"></i>  About</a>
+                        </li>
+                        @if (_signInManager.IsSignedIn(User))
+                        {
+                            <li>
+                                <a id="aProfile" asp-area="" asp-controller="Home" asp-action="Profile"><i class="fa fa-user"></i>  Profile</a>
+                            </li>
+                            <li class="right">
+                                <a id="aLogin" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fa fa-sign-out"></i>  Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="right">
+                                <a id="aLogin" asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i>  Login</a>
+                            </li>
+
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <section id="main-section" style="min-height:600px">
+        <div class="container">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </section>
+    <footer class="footer text-muted">
+        <div class="container centered">
+            &copy; 2020 - HotelBooking - <a asp-area="" asp-controller="Home" asp-action="Privacy"> Privacy</a>
+        </div>
+    </footer>
+    
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(document).ready(function () {
+        @if(ViewData["Title"].ToString() == "Login" || ViewData["Title"].ToString() == "Home Page")
+        {
+            <text>$("#main-section").addClass('backg-img');</text>
+        }
+        else
+        {
+            <text>$("#main-section").addClass('backg-col');</text>
+        }
+    });
+    </script>
+    <script>
+        $(document).ready(function () {
+            @switch (ViewData["Title"].ToString())
+        {
+            case "Home Page":
+                     <text>$("#aHome").addClass('active-link')</text>
+                     break;
+            case "Login":
+                     <text>$("#aLogin").addClass('active-link')</text>
+                     break;
+            case "About":
+                     <text>$("#aAbout").addClass('active-link')</text>
+                     break;
+            case "Profile":
+                     <text>$("#aProfile").addClass('active-link')</text>
+                     break;
+        }
+
+
+        @if(ViewData["Title"].ToString() == "Login" || ViewData["Title"].ToString() == "Register" || ViewData["Title"].ToString() == "Home Page")
+        {
+            <text>$("#main-section").addClass('backg-img');</text>
+        }
+        else
+        {
+            <text>$("#main-section").addClass('backg-col');</text>
+        }
+    });
+    </script>
+</body>
+</html>
