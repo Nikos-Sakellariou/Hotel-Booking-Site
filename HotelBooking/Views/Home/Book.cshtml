@@ -1,0 +1,372 @@
+﻿@model BookingModel
+
+@{
+    ViewData["Title"] = "Book";
+
+}
+
+@section Links {
+    <link rel="stylesheet" href="~/css/star-rating-svg.css">
+}
+
+@section FirstScripts {
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+}
+
+<div id="wrapper" style="background-color: #F4F4F4">
+    <div class=" container-fluid">
+        <div class="row ">
+            <div class="col-md-6">
+                <h2 class="hotel-name">
+                    @Model.Room.Name
+                </h2>
+                <span class="hotel-details">@Model.Room.City - @Model.Room.Area</span>
+                <br>
+                <h3 class="hotel-name-txt">
+                    Reviews
+                </h3>
+                <div class="hotel-rating jq-stars"></div>
+            </div>
+            <div class="col-md-2">
+                <span class="hotel-ratings heart1" data-fav="@Model.Room.RoomId">
+                    <svg class="heart right" viewBox="0 0 32 29.6">
+                        <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+						c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="col-md-4">
+                <h3 class="hotel-name-price">
+                    Price/per night @Model.Room.Price €
+                </h3>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6 hotel-img">
+                <img class="img-responsive" src="~/img/@Model.Room.Photo" alt="Room Image" />
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-2 hotel-feats">
+                Guests: <em style="color: rgb(0, 119, 204)">@Model.Room.CountOfGuests</em>
+            </div>
+            <div class="col-md-2 hotel-feats">
+                Room: <em style="color: rgb(0, 119, 204)">@Model.RoomDescr.Replace(" Room", "")</em>
+            </div>
+            <div class="col-md-2 hotel-feats">
+                Parking: <em style="color: @(Model.Room.Parking == 1 ? "rgb(0, 119, 204)" : "darkred")">@(Model.Room.Parking == 1 ? "YES" : "NO")</em>
+            </div>
+            <div class="col-md-2 hotel-feats">
+                WiFi: <em style="color: @(Model.Room.Wifi == 1 ? "rgb(0, 119, 204)" : "darkred")">@(Model.Room.Wifi == 1 ? "YES" : "NO")</em>
+            </div>
+            <div class="col-md-2 hotel-feats">
+                Pet Friendly: <em style="color: @(Model.Room.PetFriendly == 1 ? "rgb(0, 119, 204)" : "darkred")">@(Model.Room.PetFriendly == 1 ? "YES" : "NO")</em>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12 descrbox">
+                <div class="row col-md-10 descr">
+                    <h3>Room Description</h3>
+                </div>
+                <div class="row col-md-10">
+                    <p class="descrp">@Model.Room.LongDescription</p>
+                </div>
+                @if (Context.User.Identity.IsAuthenticated)
+                {
+                    if (@Model.CheckInDate >= DateTime.Today.ToLocalTime())
+                    {
+                        <form asp-action="BookRegister" asp-route-roomId="@Model.Room.RoomId" asp-route-datein="@Model.CheckInDate" asp-route-dateout="@Model.CheckOutDate" method="post">
+                            <div class="row col-md-10">
+                                <input type="submit" class="booknow" value="Book now" />
+                            </div>
+                        </form>
+                    }
+                }
+                else
+                {
+                    <div class="row col-md-10">
+                        <input type="submit" class="booked" value="Login to Book" disabled />
+                    </div>
+                }
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12 descrbox">
+                <div class="mapouter">
+                    <div class="gmap_canvas embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" id="gmap_canvas" src="https://maps.google.com/maps?q=@Model.Room.LatLocation,@Model.Room.LngLocation&t=&z=17&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12 descrbox">
+                <div class="row col-md-10 descr">
+                    <h3>Reviews</h3>
+                </div>
+                @foreach (var review in Model.ReviewModel)
+                {
+                    <div class="row col-md-10">
+                        <div class="row col-md-10">
+                            <p class="descrp">Username: <b>@review.Username</b></p>
+
+                            <div data-rating="@review.Rate" class="my-rating jq-stars"></div>
+                        </div>
+                        <div class="row col-md-10">
+                            <p class="descrp" style="font-size: 14px"> <i>Add Time: @review.DateCreated.ToString("dd/MM/yyyy hh:mm") </i></p>
+                        </div>
+                        <div class="row col-md-10">
+                            <p class="descrp">@review.Text</p>
+                        </div>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12 descrbox">
+                <div class="row col-md-10 descr">
+                    <h3>Add Review</h3>
+                </div>
+                <form id="reviewForm">
+                    <div class="row col-md-10">
+                        <div class="row col-md-10">
+                            <div class="hotel-ratings">
+                                <svg style="display: none;">
+                                    <symbol id="star" viewBox="0 0 98 92">
+                                        <title>star</title>
+                                        <path stroke='#000' stroke-width='5' d='M49 73.5L22.55 87.406l5.05-29.453-21.398-20.86 29.573-4.296L49 6l13.225 26.797 29.573 4.297-21.4 20.86 5.052 29.452z' fill-rule='evenodd' />
+                                    </symbol>
+                                </svg>
+                                <div style="display: inline-block">
+                                    <div id="stars" class="stars">
+                                        <a id="star5" class="star"><svg class="starsvg"><use xlink:href="#star"></use></svg></a>
+                                        <a id="star4" class="star"><svg class="starsvg"><use xlink:href="#star"></use></svg></a>
+                                        <a id="star3" class="star"><svg class="starsvg"><use xlink:href="#star"></use></svg></a>
+                                        <a id="star2" class="star"><svg class="starsvg"><use xlink:href="#star"></use></svg></a>
+                                        <a id="star1" class="star"><svg class="starsvg"><use xlink:href="#star"></use></svg></a>
+                                    </div>
+                                </div>
+                                <div id="rate" name="rate"></div>
+                                <input type="hidden" id="rated" name="rated" required />
+                                <input type="hidden" id="roomid" name="roomid" value="@Model.Room.RoomId" required />
+                            </div>
+                        </div>
+                        <div class="row col-md-10">
+                            <textarea id="review" name="review" class="review-textarea" maxlength="300" placeholder="Write your review" required></textarea>
+                        </div>
+                        <div class="row col-md-10">
+                            @if (Context.User.Identity.IsAuthenticated)
+                            {
+                                <input type="submit" class="booknow" value="Submit" />
+                            }
+                            else
+                            {
+                                <input type="submit" class="booked" value="Login to Review" disabled />
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+
+    <script>
+          $(".heart1").each(function () {
+            var fav = $(this).attr('data-fav');
+            $.ajax({
+                url: '@Url.Action("GetFavorite", "Home")',
+                data: { roomId: fav },
+                success: function (result) {
+                    var flag = result;
+                    var heart = $(".heart1[data-fav=" + fav + "]").find(".heart");
+                    heart.attr('data-flag', flag);
+                    if (heart.attr('data-flag')==0) {
+                        heart.css('fill', 'grey');
+                    }
+                    else {
+                        heart.css('fill', 'red');
+                    }
+                    heart.hover(function () {
+                    if (heart.attr('data-flag') == 0) {
+                        heart.css('fill', 'darkgrey');
+                    }
+                    else {
+                        heart.css('fill', 'darkred');
+                    }
+                    }, function () {
+                        if (heart.attr('data-flag') == 0) {
+                            heart.css('fill', 'grey');
+                        }
+                        else {
+                            heart.css('fill', 'red');
+                        }
+                    }
+                    );
+
+
+                    heart.click(function () {
+                        if (heart.attr('data-flag') == 0) {
+                            $.ajax({
+                                async: true,
+                                url: '@Url.Action("SetFavorite", "Home")',
+                                data: { roomId: fav ,status:1},
+                                success: function () {
+                                    heart.css('fill', 'red');
+                                    heart.attr('data-flag', 1);
+                                }
+                            });
+                        }
+                        else {
+                             $.ajax({
+                                async: true,
+                                url: '@Url.Action("SetFavorite", "Home")',
+                                data: { roomId: fav ,status:0},
+                                success: function () {
+                                    heart.css('fill', 'grey');
+                                    heart.attr('data-flag', 0);
+                                }
+                            });
+                        }
+                    });
+                    }
+             });
+
+        });
+    </script>
+    <script>
+        var starContainer = document.getElementById('stars');
+        var stars = Array.prototype.slice.call(starContainer.children);
+        var totalStars = stars.length;
+        var rate = document.getElementById('rate');
+        var rated = document.getElementById('rated');
+
+        starContainer.addEventListener('click', function (e) {
+            var index = stars.indexOf(e.target);
+            var count = count = totalStars - index;
+            stars.forEach(el => el.classList.remove('is-selected'));
+            e.target.classList.add('is-selected');
+
+            rate.textContent = 'You have rated ' + count + ' stars';
+            rated.value = count;
+
+            $(".star svg").css('fill', 'none');
+            switch (count) {
+                case 1:
+                    $("#star2 ~ .star svg").css('fill', 'orange');
+                    break;
+                case 2:
+                    $("#star3 ~ .star svg").css('fill', 'orange');
+                    break;
+                case 3:
+                    $("#star4 ~ .star svg").css('fill', 'orange');
+                    break;
+                case 4:
+                    $("#star5 ~ .star svg").css('fill', 'orange');
+                    break;
+                case 5:
+                    $(".star svg").css('fill', 'orange');
+                    break;
+            }
+
+
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#reviewForm").submit(function (e) {
+                var rated = $("#rated").val();
+                var rev = $("#review").val();
+                var room = $("#roomid").val();
+                e.preventDefault();
+                $.ajax({
+                    async: true,
+                    url: '@Url.Action("InsertReview", "Home")',
+                    data: { rate: rated, text: rev, roomId: room },
+                    success: function() {
+                        swal("Thank you", "Your review has been registered.", "success");
+                        location.reload();
+                    },
+                    error: function() {
+                        swal ( "Oops" ,  "Something went wrong. Your review has not been registered." ,  "error" )
+                    }
+                });
+            }); //end .submit()
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#reviewForm').validate({
+                ignore: "",
+                rules: {
+                    rated: {
+                        required: true,
+                    },
+                    review: {
+                        required: true,
+                        maxlength: 200,
+                        minlength: 40
+                    },
+                },
+                messages: {
+                    rated: {
+                        required: 'Please provide your rate.',
+                    },
+                    review: {
+                        required: 'Please provide a review.',
+                        minlength: 'Your review should be at least 40 characters long',
+                        maxlength: 'Your review cannot be more than 200 characters long',
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+        @{double init = 0.0;
+            try
+            {
+                init = Math.Round((double)Model.ReviewModel.Sum(r => r.Rate) / Model.ReviewModel.Count(), 2);
+            }
+            catch (Exception)
+            {
+            }
+
+            <text>
+        $(function () {
+            $(".hotel-rating").starRating({
+                initialRating: @init,
+                starSize: 25
+            });
+            if (@init > 0) {
+                $("#TotalRating").text(@init);
+                $(".hotel-rating").append('<div style="display:inline-block; vertical-align: bottom; padding-left: 5px">' + ' ' + @init+ '</div>');
+
+            }
+            });</text>
+            }
+    </script>
+    <script>
+        $(function () {
+
+            var init = $(".my-rating").attr('data-rating');
+            $(".my-rating").starRating({
+                initialRating: init,
+                starSize: 20
+            });
+
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/jquery.star-rating-svg.js"></script>
+}
