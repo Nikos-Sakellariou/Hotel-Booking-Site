@@ -7,7 +7,7 @@ It is a demo project for education purposes. Hotel Booking is all developed with
 ## Utilizes
 
 ### Database
-* MySQL DB
+* MySQL
 ### Front-end
 * HTML
 * CSS
