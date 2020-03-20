@@ -4,20 +4,20 @@ It is a demo project for education purposes. Hotel Booking is all developed with
 
 Utilizes
 
-+Database
-	-MySQL DB
-+Front-end
-	-HTML
-	-CSS
-	-Bootstrap
-	-Javascript
-	-jQuery
-	-Ajax
-	-Sweet Alert https://sweetalert.js.org/
-+Back-end
-	-C# .NET MVC 
+Database
+-MySQL DB
+Front-end
+-HTML
+-CSS
+-Bootstrap
+-Javascript
+-jQuery
+-Ajax
+-Sweet Alert https://sweetalert.js.org/
+Back-end
+-C# .NET MVC 
 	
 Requires
-	-XAMPP
-	-MySQL Workbench
-	-VS 2019
+-XAMPP
+-MySQL Workbench
+-VS 2019
